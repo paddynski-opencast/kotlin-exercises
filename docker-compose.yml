@@ -1,9 +1,9 @@
 services:
-  hmpps-template-kotlin:
-    image: ghcr.io/ministryofjustice/hmpps-template-kotlin:latest
+  kotlin-sandbox:
+    image: ghcr.io/ministryofjustice/kotlin-sandbox:latest
     networks:
       - hmpps
-    container_name: hmpps-template-kotlin
+    container_name: kotlin-sandbox
     ports:
       - "8080:8080"
     healthcheck:

@@ -1,11 +1,11 @@
-package uk.gov.justice.digital.hmpps.templatepackagename
+package uk.gov.justice.digital.hmpps.kotlinexercises
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class HmppsTemplateKotlin
+class KotlinExercises
 
 fun main(args: Array<String>) {
-  runApplication<HmppsTemplateKotlin>(*args)
+  runApplication<KotlinExercises>(*args)
 }

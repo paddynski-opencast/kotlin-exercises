@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.templatepackagename.config
+package uk.gov.justice.digital.hmpps.kotlinexercises.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,4 +16,8 @@ class WebClientConfiguration(
   // HMPPS Auth health ping is required if your service calls HMPPS Auth to get a token to call other services
   @Bean
   fun hmppsAuthHealthWebClient(builder: WebClient.Builder): WebClient = builder.healthWebClient(hmppsAuthBaseUri, healthTimeout)
+
+  // General-purpose WebClient for external API calls
+  @Bean
+  fun webClient(builder: WebClient.Builder): WebClient = builder.build()
 }

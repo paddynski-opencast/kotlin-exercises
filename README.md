@@ -1,156 +1,103 @@
-# hmpps-template-kotlin
+# Introduction
 
-[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-template-kotlin/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-template-kotlin)
-[![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-template-kotlin)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://template-kotlin-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
+This is a clone of https://github.com/ministryofjustice/hmpps-template-kotlin/tree/main to provide a base project for learning Kotlin in a real-world-ish environment.
 
-Template github repo used for new Kotlin based projects.
+It has a few example endpoints to run locally and view in Swagger UI at http://localhost:8080/swagger-ui.html
 
-# Instructions
+Note that there may be redundant files from the template that have not been removed.
 
-If this is a HMPPS project then the project will be created as part of bootstrapping -
-see [hmpps-project-bootstrap](https://github.com/ministryofjustice/hmpps-project-bootstrap). You are able to specify a
-template application using the `github_template_repo` attribute to clone without the need to manually do this yourself
-within GitHub.
+Feel free to suggest changes and additions to the exercises or base code.
 
-This project is community managed by the mojdt `#kotlin-dev` slack channel.
-Please raise any questions or queries there. Contributions welcome!
+# How to Run & Tech
 
-Our security policy is located [here](https://github.com/ministryofjustice/hmpps-template-kotlin/security/policy).
+It is a SpringMVC application due to the uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter dependency.
 
-Documentation to create new service is located [here](https://tech-docs.hmpps.service.justice.gov.uk/creating-new-services/).
+You can run it with `./gradlew bootRun --args='--spring.profiles.active=local'` and then access the endpoints at http://localhost:8080.
 
-## Creating a Cloud Platform namespace
+It is set up with JDK 25 as the default, so you can take advantage of features like virtual threads.
 
-When deploying to a new namespace, you may wish to use the
-[templates project namespace](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev)
-as the basis for your new namespace. This namespace contains both the kotlin and typescript template projects,
-which is the usual way that projects are setup.
+# Exercises
 
-Copy this folder and update all the existing namespace references to correspond to the environment to which you're deploying.
+Change as much or as litle as you like to complete the exercises.
+They are designed to be relatively open-ended to support exploratory learning.
+If you are familiar with Java, some of these may be trivial.
 
-If you only need the kotlin configuration then remove all typescript references and remove the elasticache configuration.
+Make sure you write tests as you go!
 
-To ensure the correct github teams can approve releases, you will need to make changes to the configuration in `resources/service-account-github` where the appropriate team names will need to be added (based on [lines 98-100](https://github.com/ministryofjustice/cloud-platform-environments/blob/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev/resources/serviceaccount-github.tf#L98) and the reference appended to the teams list below [line 112](https://github.com/ministryofjustice/cloud-platform-environments/blob/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev/resources/serviceaccount-github.tf#L112)). Note: hmpps-sre is in this list to assist with deployment issues.
+The "main" branch is the base template, the "example-completed-exercises" branch contains possible solutions for the exercises, with each commit a different exercise.
 
-Submit a PR to the Cloud Platform team in [#ask-cloud-platform](https://moj.enterprise.slack.com/archives/C57UPMZLY).
-Further instructions from the Cloud Platform team can be found in the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide)
+## Exercise 1 - Create an order endpoint
 
-## Renaming from HMPPS Template Kotlin - github Actions
+Implement:
+- POST /orders
+- GET /orders/{id}
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
+Requirements:
+1. Order input (CreateOrderRequest):
+   1. customerId,
+   1. productId,
+   1. quantity,
+   1. address (line1, city, postcode).
+1. Order to store in DB (Order):
+   1. orderId,
+   1. customerId,
+   1. productId,
+   1. quantity,
+   1. address (line1, city, postcode),
+   1. trackingId,
+1. Order to return in response (OrderDto):
+   1. orderId,
+   1. trackingUrl,
+1. Tracking information isn't always available immediately after an order is placed.
+   1. Update the code to correctly handle nullable tracking IDs.
+   1. No !! double-bang operators remain in the codebase.
+   1. API returns a default value for tracking URL when appropriate.
+1. Use extension functions to map from CreateOrderRequest to Order and from Order to OrderDto.
+1. Handle error cases e.g. no items requested.
+   1. Prefer using sealed interfaces for error handling.
+   1. Convert these to appropriate HTTP status codes in the controller.
 
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`. This workflow will
-execute the `rename-project.bash` and create Pull Request for you to review. Review the PR and merge.
+## Exercise 2 - Searching Orders
 
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
+Customer support needs a search endpoint.
 
-The script takes six arguments:
+Requirements:
+1. Implement GET /orders
+1. Optional query parameters:
+    1. customerId
+    1. orderStatus
+1. Any combination of query parameters should work.
+1. OrderStatus is new - a refactor may be required. Allowed values:
+    1. CREATED,
+    1. PROCESSING,
+    1. SHIPPED,
+    1. DELIVERED,
+1. Stretch Goal: Additional query parameters:
+    1. postcode
+    1. minimumQuantity
 
-### New project name
+## Exercise 3 - Business Rules
 
-This should start with `hmpps-` e.g. `hmpps-prison-visits` so that it can be easily distinguished in github from
-other departments projects. Try to avoid using abbreviations so that others can understand easily what your project is.
+Implement PATCH /orders/{id}/status
 
-### Slack channel for release notifications
+Requirements:
+1. CREATED → PROCESSING
+1. PROCESSING → SHIPPED
+1. SHIPPED → DELIVERED
+1. Illegal transitions should be rejected.
 
-By default, release notifications are only enabled for production. The circleci configuration can be amended to send
-release notifications for deployments to other environments if required. Note that if the configuration is amended,
-the slack channel should then be amended to your own team's channel as `dps-releases` is strictly for production release
-notifications. If the slack channel is set to something other than `dps-releases`, production release notifications
-will still automatically go to `dps-releases` as well. This is configured by `releases-slack-channel` in
-`.circleci/config.yml`.
+Avoid nested if/else if possible.
 
-### Slack channel for pipeline security notifications
+## Exercise 4 - Warehouse Allocation
+Each warehouse stocks different products.
 
-Ths channel should be specific to your team and is for daily / weekly security scanning job results. It is your team's
-responsibility to keep up-to-date with security issues and update your application so that these jobs pass. You will
-only be notified if the jobs fail. The scan results can always be found in circleci for your project. This is
-configured by `alerts-slack-channel` in `.circleci/config.yml`.
+Warehouse A (Unit 2, The Kiln, Hoults Yard, Walker Road, Newcastle-upon-Tyne, NE6 1AB)
+- Product 1
+- Product 2
 
-### Non production kubernetes alerts
+Warehouse B (Castle Park - Welsh Back, The Pithay, Bristol BS1 2NB)
+- Product 2
+- Product 5
 
-By default Prometheus alerts are created in the application namespaces to monitor your application e.g. if your
-application is crash looping, there are a significant number of errors from the ingress. Since Prometheus runs in
-cloud platform AlertManager needs to be setup first with your channel. Please see
-[Create your own custom alerts](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html)
-in the Cloud Platform user guide. Once that is setup then the `custom severity label` can be used for
-`alertSeverity` in the `helm_deploy/values-*.yaml` configuration.
-
-Normally it is worth setting up two separate labels and therefore two separate slack channels - one for your production
-alerts and one for your non-production alerts. Using the same channel can mean that production alerts are sometimes
-lost within non-production issues.
-
-### Production kubernetes alerts
-
-This is the severity label for production, determined by the `custom severity label`. See the above
-[Non production kubernetes alerts section](non-production-kubernetes-alerts) for more information. This is configured in `helm_deploy/values-prod.yaml`.
-
-### Product ID
-
-This is so that we can link a component to a product and thus provide team and product information in the Developer
-Portal. Refer to the developer portal at <https://developer-portal.hmpps.service.justice.gov.uk/products> to find your
-product id. This is configured in `helm_deploy/<project_name>/values.yaml`.
-
-## Manually branding from template app
-
-Run the `rename-project.bash` without any arguments. This will prompt for the six required parameters and create a PR.
-The script requires a recent version of `bash` to be installed, as well as GNU `sed` in the path.
-
-## Common Kotlin patterns
-
-Many patterns have evolved for HMPPS Kotlin applications. Using these patterns provides consistency across our suite of
-Kotlin microservices and allows you to concentrate on building your business needs rather than reinventing the
-technical approach.
-
-Documentation for these patterns can be found in the [HMPPS tech docs](https://tech-docs.hmpps.service.justice.gov.uk/common-kotlin-patterns/).
-If this documentation is incorrect or needs improving please report to [#ask-prisons-digital-sre](https://moj.enterprise.slack.com/archives/C06MWP0UKDE)
-or [raise a PR](https://github.com/ministryofjustice/hmpps-tech-docs).
-
-## Running the application locally
-
-The application comes with a `dev` spring profile that includes default settings for running locally. This is not
-necessary when deploying to kubernetes as these values are included in the helm configuration templates -
-e.g. `values-dev.yaml`.
-
-There is also a `docker-compose.yml` that can be used to run a local instance of the template in docker and also an
-instance of HMPPS Auth (required if your service calls out to other services using a token).
-
-```bash
-docker compose pull && docker compose up
-```
-
-will run the application and HMPPS Auth within a local docker instance.
-
-### Running the application in Intellij
-
-```bash
-docker compose pull && docker compose up --scale hmpps-template-kotlin=0
-```
-
-will just start a docker instance of HMPPS Auth. The application should then be started with a `dev` active profile
-in Intellij.
-
-### Building and running the docker image locally
-
-The `Dockerfile` relies on the application being built first. Steps to build the docker image:
-1. Build the jar files
-```
-./gradlew clean assemble
-```
-2. Copy the jar files to the base directory so that the docker build can find them
-```
-cp build/libs/*.jar .
-```
-3. Build the docker image with required arguments
-```
-docker build --build-arg GIT_REF=21345 --build-arg GIT_BRANCH=bob --build-arg BUILD_NUMBER=$(date '+%Y-%m-%d') .
-```
-4. Run the docker image, setting the auth url so that it starts up
-```
-docker run -e HMPPS_AUTH_URL="https://sign-in-dev.hmpps.service.justice.gov.uk/auth" <sha from step 3>
-```
+Requirements:
+1. When an order is created, allocate it to the nearest warehouse that stocks every requested item.

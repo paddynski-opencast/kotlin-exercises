@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.templatepackagename.integration
+package uk.gov.justice.digital.hmpps.kotlinexercises.integration
 
 import org.junit.jupiter.api.Test
 

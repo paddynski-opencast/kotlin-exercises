@@ -1,6 +1,6 @@
 {
   "role": {
-    "name": "hmpps-template-kotlin"
+    "name": "kotlin-sandbox"
   },
   "customDimensions": {
     "service.version": "${BUILD_NUMBER}"
