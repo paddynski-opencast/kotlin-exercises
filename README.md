@@ -101,3 +101,5 @@ Warehouse B (Castle Park - Welsh Back, The Pithay, Bristol BS1 2NB)
 
 Requirements:
 1. When an order is created, allocate it to the nearest warehouse that stocks every requested item.
+1. Optionally use https://api.postcodes.io/docs/postcode/lookup#endpoint to look up a postcode.
+   1. Then probably just ask AI to calculate the distance between two coordinates ;)
