@@ -6,25 +6,35 @@ It has a few example endpoints to run locally and view in Swagger UI at http://l
 
 Note that there may be redundant files from the template that have not been removed.
 
-Feel free to suggest changes and additions to the exercises or base code.
+# How to Run
 
-# How to Run & Tech
+You can run it with `./gradlew bootRun --args='--spring.profiles.active=local'`
+
+# Tech
 
 It is a SpringMVC application due to the uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter dependency.
 
-You can run it with `./gradlew bootRun --args='--spring.profiles.active=local'` and then access the endpoints at http://localhost:8080.
-
-It is set up with JDK 25 as the default, so you can take advantage of features like virtual threads.
+It is set up with JDK 25 as the default.
 
 # Exercises
 
 Change as much or as litle as you like to complete the exercises.
 They are designed to be relatively open-ended to support exploratory learning.
-If you are familiar with Java, some of these may be trivial.
+If you are familiar with Java and Springboot, the exercises will be easier, but should be pushing you quickly towards areas where Kotlin and Java differ.
 
 Make sure you write tests as you go!
 
 The "main" branch is the base template, the "example-completed-exercises" branch contains possible solutions for the exercises, with each commit a different exercise.
+
+# The Future
+
+The Scala Sandbox has gone through many iterations, and is now a way of adding a measure of Scala experience to your Consultant Profile.
+These exercises may be the basis for the same in Kotlin.
+
+# Contributing
+
+Feel free to raise a Pull Request or commit directly into the 'main' branch for new exercises or base code for exercises.
+Feel free to add/modify the example solutions in the 'example-completed-exercises' branch.
 
 ## Exercise 1 - Create an order endpoint
 
@@ -103,3 +113,7 @@ Requirements:
 1. When an order is created, allocate it to the nearest warehouse that stocks every requested item.
 1. Optionally use https://api.postcodes.io/docs/postcode/lookup#endpoint to look up a postcode.
    1. Then probably just ask AI to calculate the distance between two coordinates ;)
+
+## Exercise 5 - Add an exercise...
+
+Don't forget to publish the exercise and example solution in this repo!
