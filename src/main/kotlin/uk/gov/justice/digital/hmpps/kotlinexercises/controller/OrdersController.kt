@@ -14,20 +14,20 @@ import uk.gov.justice.digital.hmpps.kotlinexercises.service.OrdersService
 @RestController
 @RequestMapping("/orders", produces = ["application/json"])
 class OrdersController(
-    val ordersService: OrdersService
+  val ordersService: OrdersService
 ): AbstractController() {
 
-    @PostMapping
-    @PreAuthorize("permitAll()")
-    fun order(@RequestBody @Valid order: OrderRequest): Mono<Map<String, Any>>  = ordersService
-        .save(order)
-        .map(::buildSuccessResponse)
-        .onErrorResume { error -> Mono.just(buildErrorResponse(error)) }
+  @PostMapping
+  @PreAuthorize("permitAll()")
+  fun save(@RequestBody @Valid order: OrderRequest): Mono<Map<String, Any>>  = ordersService
+    .save(order)
+    .map(::buildSuccessResponse)
+    .onErrorResume { error -> Mono.just(buildErrorResponse(error)) }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("permitAll()")
-    fun order(id: String): Mono<Map<String, Any>>  = ordersService
-        .get(id)
-        .map(::buildSuccessResponse)
-        .onErrorResume { error -> Mono.just(buildErrorResponse(error)) }
+  @GetMapping("/{id}")
+  @PreAuthorize("permitAll()")
+ fun get(id: String): Mono<Map<String, Any>>  = ordersService
+    .get(id)
+    .map(::buildSuccessResponse)
+    .onErrorResume { error -> Mono.just(buildErrorResponse(error)) }
 }

@@ -8,8 +8,8 @@ import java.util.UUID
 
 @Entity
 class Order(var item: String, var quantity: Int) {
-    @Id
-    @Column(name = "id", nullable = false, unique = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    var id: UUID = UUID.randomUUID()
+  @Id
+  @Column(name = "id", nullable = false, unique = true)
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  var id: UUID = UUID.randomUUID()
 }
