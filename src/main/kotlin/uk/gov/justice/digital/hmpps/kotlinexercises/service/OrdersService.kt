@@ -20,7 +20,7 @@ class OrdersService(
       line1 = order.line,
       city = order.city,
       postCode = order.post,
-      trackingId = "",
+      trackingId = null,
     )
     Mono.just(ordersRepository.save(dto).id.toString())
   } catch (e: Exception) {
@@ -32,7 +32,7 @@ class OrdersService(
     Mono.just(
       CustomerOrderResponse(
         orderId = dto.id.toString(),
-        trackingId = dto.trackingId,
+        trackingUrl = if (dto.trackingId == null) "" else "/orders/tracking/${dto.trackingId}",
       ),
     )
   } catch (e: Exception) {

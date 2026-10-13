@@ -14,7 +14,7 @@ class CustomerOrder(
   var line1: String,
   var city: String,
   var postCode: String,
-  var trackingId: String,
+  var trackingId: UUID?,
 ) {
   @Id
   @Column(name = "id", nullable = false, unique = true)
