@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.kotlinexercises.service
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.kotlinexercises.dto.CustomerOrderRequest
+import uk.gov.justice.digital.hmpps.kotlinexercises.dto.CustomerOrderResponse
 import uk.gov.justice.digital.hmpps.kotlinexercises.model.CustomerOrder
 import uk.gov.justice.digital.hmpps.kotlinexercises.repository.OrdersRepository
 import java.util.*
@@ -26,16 +27,12 @@ class OrdersService(
     Mono.error(e)
   }
 
-  fun retrieveOrder(id: String): Mono<CustomerOrderRequest> = try {
+  fun retrieveOrder(id: String): Mono<CustomerOrderResponse> = try {
     val dto = ordersRepository.getReferenceById(UUID.fromString(id))
     Mono.just(
-      CustomerOrderRequest(
-        customerId = dto.customerId,
-        productId = dto.productId,
-        quantity = dto.quantity,
-        line = dto.line1,
-        city = dto.city,
-        post = dto.postCode,
+      CustomerOrderResponse(
+        orderId = dto.id.toString(),
+        trackingId = dto.trackingId,
       ),
     )
   } catch (e: Exception) {

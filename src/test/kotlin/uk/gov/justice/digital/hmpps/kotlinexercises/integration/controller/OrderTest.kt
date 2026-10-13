@@ -40,7 +40,7 @@ class OrderTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Background work endpoint handles errors gracefully`() {
+  fun `Order endpoint handles errors gracefully`() {
     webTestClient
       .get()
       .uri("/orders/1")
