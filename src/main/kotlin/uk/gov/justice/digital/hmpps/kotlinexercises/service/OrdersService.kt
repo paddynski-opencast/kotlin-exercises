@@ -10,7 +10,7 @@ import kotlin.Int
 
 @Service
 class OrdersService(
-    val ordersRepository: OrdersRepository
+  val ordersRepository: OrdersRepository
 ) {
     fun save(order: OrderRequest): Mono<String> {
         return try {
