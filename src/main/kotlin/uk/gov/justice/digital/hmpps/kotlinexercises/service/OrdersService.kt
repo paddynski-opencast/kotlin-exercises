@@ -5,8 +5,8 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.kotlinexercises.dto.OrderRequest
 import uk.gov.justice.digital.hmpps.kotlinexercises.model.Order
 import uk.gov.justice.digital.hmpps.kotlinexercises.repository.OrdersRepository
-import java.util.Optional
-import java.util.UUID
+import java.util.*
+import kotlin.Int
 
 @Service
 class OrdersService(
@@ -14,7 +14,15 @@ class OrdersService(
 ) {
     fun save(order: OrderRequest): Mono<String> {
         return try {
-            val dto = Order(order.item, order.quantity)
+            val dto = Order(
+              customerId = order.customerId,
+              productId = order.productId,
+              quantity = order.quantity,
+              line1 = order.line1,
+              city = order.city,
+              postCode = order.postCode,
+              trackingId = ""
+            )
             Mono.just(ordersRepository.save(dto).id.toString())
         } catch (e: Exception) {
             Mono.error(e)
@@ -24,7 +32,14 @@ class OrdersService(
     fun get(id: String): Mono<OrderRequest> {
         return try {
             val dto = ordersRepository.getReferenceById(UUID.fromString(id))
-            Mono.just(OrderRequest(dto.item, dto.quantity))
+            Mono.just(OrderRequest(
+              customerId = dto.customerId,
+              productId = dto.productId,
+              quantity = dto.quantity,
+              line1 = dto.line1,
+              city = dto.city,
+              postCode = dto.postCode
+            ))
         } catch (e: Exception) {
             Mono.error(e)
         }
