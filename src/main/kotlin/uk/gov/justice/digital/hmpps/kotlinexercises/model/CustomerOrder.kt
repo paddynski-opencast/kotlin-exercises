@@ -7,14 +7,14 @@ import jakarta.persistence.Id
 import java.util.UUID
 
 @Entity
-class Order(
+class CustomerOrder(
   var customerId: Int,
   var productId: Int,
   var quantity: Int,
   var line1: String,
   var city: String,
   var postCode: String,
-  var trackingId: String
+  var trackingId: String,
 ) {
   @Id
   @Column(name = "id", nullable = false, unique = true)
