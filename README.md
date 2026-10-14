@@ -10,6 +10,8 @@ Note that there may be redundant files from the template that have not been remo
 
 You can run it with `./gradlew bootRun --args='--spring.profiles.active=local'`
 
+To test the endpoints, run rhw application (see above) and go to http://localhost:8080/swagger-ui/index.html#/.
+
 # Tech
 
 It is a SpringMVC application due to the uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter dependency.
