@@ -1,10 +1,11 @@
 package uk.gov.justice.digital.hmpps.kotlinexercises.service
 
+import arrow.core.Either
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.kotlinexercises.dto.CustomerOrderRequest
 import uk.gov.justice.digital.hmpps.kotlinexercises.dto.CustomerOrderResponse
 import uk.gov.justice.digital.hmpps.kotlinexercises.model.CustomerOrder
+import uk.gov.justice.digital.hmpps.kotlinexercises.model.Error
 import uk.gov.justice.digital.hmpps.kotlinexercises.repository.OrdersRepository
 import java.util.*
 
@@ -12,30 +13,38 @@ import java.util.*
 class OrdersService(
   val ordersRepository: OrdersRepository,
 ) {
-  fun createOrder(order: CustomerOrderRequest): Mono<String> = try {
+  fun createOrder(order: CustomerOrderRequest): Either<Error, String> = try {
     val dto = CustomerOrder(
       customerId = order.customerId,
       productId = order.productId,
       quantity = order.quantity,
-      line1 = order.line,
+      line = order.line,
       city = order.city,
-      postCode = order.post,
-      trackingId = null,
+      post = order.post,
+      trackingIds = listOf(),
     )
-    Mono.just(ordersRepository.save(dto).id.toString())
+    Either.Right(ordersRepository.save(dto).id.toString())
   } catch (e: Exception) {
-    Mono.error(e)
+    Either.Left(Error(500, e.message))
   }
 
-  fun retrieveOrder(id: String): Mono<CustomerOrderResponse> = try {
-    val dto = ordersRepository.getReferenceById(UUID.fromString(id))
-    Mono.just(
-      CustomerOrderResponse(
-        orderId = dto.id.toString(),
-        trackingUrl = if (dto.trackingId == null) "" else "/orders/tracking/${dto.trackingId}",
-      ),
-    )
+  fun retrieveOrder(id: String): Either<Error, CustomerOrderResponse> = try {
+    val uuid = UUID.fromString(id)
+    if (ordersRepository.existsById(uuid)) {
+      val dto = ordersRepository.getReferenceById(uuid)
+      val trackingId = dto.trackingIds.getOrNull(dto.trackingIds.size - 1)
+      Either.Right(
+        CustomerOrderResponse(
+          orderId = dto.id.toString(),
+          trackingUrl = if (trackingId == null) "" else "/orders/tracking/$trackingId",
+        ),
+      )
+    } else {
+      Either.Left(Error(404, "No orders found"))
+    }
+  } catch (e: IllegalArgumentException) {
+    Either.Left(Error(400, e.message))
   } catch (e: Exception) {
-    Mono.error(e)
+    Either.Left(Error(500, e.message))
   }
 }

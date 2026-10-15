@@ -11,10 +11,10 @@ class CustomerOrder(
   var customerId: Int,
   var productId: Int,
   var quantity: Int,
-  var line1: String,
+  var line: String,
   var city: String,
-  var postCode: String,
-  var trackingId: UUID?,
+  var post: String,
+  var trackingIds: List<UUID>,
 ) {
   @Id
   @Column(name = "id", nullable = false, unique = true)
