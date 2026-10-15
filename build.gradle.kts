@@ -13,6 +13,7 @@ dependencies {
   implementation("com.h2database:h2")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
   implementation("tools.jackson.module:jackson-module-kotlin:3.2.0")
+  implementation("io.arrow-kt:arrow-core:2.1.2")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test") // WebTestClient

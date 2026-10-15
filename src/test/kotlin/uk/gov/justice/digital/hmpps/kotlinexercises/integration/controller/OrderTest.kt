@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.kotlinexercises.dto.CustomerOrderRequest
 import uk.gov.justice.digital.hmpps.kotlinexercises.integration.IntegrationTestBase
+import java.util.UUID
 
 class OrderTest : IntegrationTestBase() {
   private fun post(): WebTestClient.ResponseSpec = webTestClient
@@ -40,14 +41,30 @@ class OrderTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Order endpoint handles errors gracefully`() {
+  fun `Order endpoint handles no data found gracefully`() {
+    val id = UUID.randomUUID()
     webTestClient
       .get()
-      .uri("/orders/1")
+      .uri("/orders/$id")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus()
-      .isOk
+      .isNotFound
+      .expectBody()
+      .jsonPath("$.error").exists()
+      .jsonPath("$.timestamp").exists()
+  }
+
+  @Test
+  fun `Order endpoint handles bad data gracefully`() {
+    val id = "${UUID.randomUUID()}".replace("-", "#")
+    webTestClient
+      .get()
+      .uri("/orders/$id")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus()
+      .isBadRequest
       .expectBody()
       .jsonPath("$.error").exists()
       .jsonPath("$.timestamp").exists()
